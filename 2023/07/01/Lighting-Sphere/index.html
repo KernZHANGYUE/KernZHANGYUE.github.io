@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Yue Zhang 张跃"><meta name="renderer" content="webkit"><meta name="copyright" content="Yue Zhang 张跃"><meta name="keywords" content="Yue Zhang 张跃"><meta name="description" content=""><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Lighting Sphere - A New Controllable Lighting System for Multi-view Lighting · Yue Zhang</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/z.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.3.0"></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/ZHANGYUE.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Yue Zhang 张跃</div><div class="profile-signature">Know your fate without fear, renew yourself every day</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Yue Zhang 张跃</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Lighting Sphere - A New Controllable Lighting System for Multi-view Lighting</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2023-07-01</span></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h2 id="Lighting-Sphere-A-New-Controllable-Lighting-System-for-Multi-view-Lighting"><a href="#Lighting-Sphere-A-New-Controllable-Lighting-System-for-Multi-view-Lighting" class="headerlink" title="Lighting Sphere: A New Controllable Lighting System for Multi-view Lighting"></a>Lighting Sphere: A New Controllable Lighting System for Multi-view Lighting</h2><p>The lighting sphere is an effective solution to the problem of high precision human pose estimation, which requires an efficient fit of natural light to human pose in large scenes. lighting sphere is an efficient solution to this task: it provides illumination by programmatically activating and deactivating a number of LEDs arranged in the sphere while capturing a photo. We aim to design a lighting sphere, which uses multiple sets of lighting units to illuminate, through the master control unit for each lighting unit control, to achieve multi-angle, multi-view and high-speed lighting control problems, so that the required lighting object to provide various angles of lighting conditions to meet the shooting conditions and lighting tasks. For the generated results will be portrait deduction and three-dimensional portrait rendering, so as to visualize the lighting effect of each angle and analyze the lighting performance. </p>
+<p>This is my undergraduate project, all completed by me</p>
+<h3 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h3><p>How to capture high quality and realistic 3D models of the human body has been a central problem in the computer vision and machine learning community. Although we have witnessed the birth of several advanced human capture systems such as 8i, Omnivor, Intel, etc. in recent years, they are still somewhat difficult to capture high frequency details and they can only simulate fixed lighting conditions. There has been a lot of work on rendering 3D human body using algorithms for natural light at all angles, and for machine learning for light rendering requires a large number of datasets for training, and the acquisition of datasets is still a huge challenge, and it would be labor intensive to use existing sunlight for dataset capture, so it is very important to design a system that can simulate natural light at all angles to replace this process. It is important to design a system that can simulate natural light at all angles to replace this process.</p>
+<p>Our lighting sphere built on HAND-3D-STUDIO. All lighting units are controlled by a control board, powered by a power conversion board, visualized and controlled by the lighting sphere control software, and the final effect is observed by a 3D portrait rendering method. The final lighting sphere is controlled in real time by 54 lighting units to achieve a multi-angle controlled light effect, with different lighting angles and the number of lighting units equal to 54. Each lighting unit can provide up to 2000hz PWM dimming frequency, achieving up to 100 levels of multi-level adjustment effect.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/1.jpg" alt="lighting sphere"></p>
+<h3 id="2-Method"><a href="#2-Method" class="headerlink" title="2. Method"></a>2. Method</h3><p>Our system has three parts in total, including: the hardware lighting system control board, the hardware lighting system lighting unit, and the 3D portrait rendering method.</p>
+<h4 id="Hardware-lighting-sphere-lighting-unit"><a href="#Hardware-lighting-sphere-lighting-unit" class="headerlink" title="Hardware lighting sphere lighting unit"></a>Hardware lighting sphere lighting unit</h4><p>The lighting unit controls six high-power white LED beads of up to 1W to achieve adjustable brightness. Although the brightness of the LED beads can be adjusted by adjusting the current, the Pulse Width Modulation (PWM) pulse width modulation is more suitable for the design of the lighting unit. If PWM is used to control the input voltage of the LED, when the PWM period is reduced to a certain degree, the strobe will no longer be visible, but will become a change in the size of the luminosity under the human eye, so as to achieve LED brightness adjustment.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/2.jpg" alt="PCB layout, 3D view, physical drawing of the lighting unit"></p>
+<p>LED lighting requires a low-voltage DC constant-current source to work, while the common power supply is usually 220V AC power supply, which can not be used directly for LED power supply. Therefore, the 220V AC power supply needs to be converted to a low-voltage constant-voltage DC power supply. Our light unit contains about 340 LEDs, each with a power of about 1W and a total power of about 340W. In order to meet the need, a low-voltage DC constant voltage source with a total power of about 340W needs to be used, and considering the impact of conversion efficiency, an appropriate power margin needs to be selected to ensure the stable operation of the power supply, so a computer host power supply with an output power of 500W is selected to ensure its stable power supply, and an output voltage of 12V is selected to meet the required power.</p>
+<h4 id="Hardware-lighting-sphere-control-board"><a href="#Hardware-lighting-sphere-control-board" class="headerlink" title="Hardware lighting sphere control board"></a>Hardware lighting sphere control board</h4><p>The control board outputs 15 PWM signals per MCU by arraying 12 STM32F103C8T6s, and outputs the 180 PWM signals used to control the light unit through the signal enhancement and through the network cable POE method. And the control signals of the control board are controlled by obtaining real-time control data from the upper computer software through RS485 communication.</p>
+<p>After the PWM signal is sent from the MCU, it needs to go through the 74HC04 inverter to reverse the signal first, in order to prevent the sudden high level at the moment of power-on, after which it needs to go through the ULN2003 as power amplification, and finally output through the net port. Pull-up and pull-down resistors are added at both ends of the ULN2003 Darlington array to increase the driving current and improve the circuit power.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/3.jpg" alt="Physical drawing and PCB layout of the Control board"></p>
+<h4 id="3D-portrait-rendering-method"><a href="#3D-portrait-rendering-method" class="headerlink" title="3D portrait rendering method"></a>3D portrait rendering method</h4><p>Metashape is a 3D modeling approach based on RGB images, which is based on multi-view geometric composition and image processing techniques that generate 3D models of objects using computer algorithms by inputting multiple sets of photographs of the target object captured at various angles. In Metashape, key point matching is used to match feature points from multiple photographs and calculate the geometric relationships between them, such as the camera’s pose (position and orientation) and the location of 3D points. This information can be further used to generate 3D models, point clouds, textures, etc.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/4.jpg" alt="Metashape portrait 3D reconstruction effect"></p>
+<h3 id="3-Experiment"><a href="#3-Experiment" class="headerlink" title="3. Experiment"></a>3. Experiment</h3><p>The lighting sphere control board is implemented through an array of 12 MCUs, which can control up to 60 lighting units by enhancing the PWM signal and outputting it through the network port. The lighting sphere control board can be controlled in real time by a PC-based visualization software and set specific operation modes for automatic control. The lighting sphere can achieve multi-angle, multi-viewpoint and high-speed lighting control issues, so that the required lighting objects to provide various angles of light conditions to meet the shooting conditions and lighting tasks.</p>
+<p>Lighting sphere through the real-time control of 54 lighting units to achieve a multi-angle controlled light effect, the different light angle and the number of light units equivalent to 54. Each lighting unit can provide up to 2000hz PWM dimming frequency, to achieve up to 100 levels of multi-level adjustment effect.</p>
+<p>Its use of HDRI full-view steel ball can be observed from multiple angles of the lighting sphere, 54 which can successfully achieve the multi-angle lighting effect on the need to light the target, through the upper computer program for real-time and efficient visual control.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/5.jpg" alt="lighting sphere effect"></p>
+<p>The system can light the object in real time from 18 angles, and the lighting of the top lighting unit can be observed from the bottom of the system, and this test was achieved in the angle switching mode with an interval of 300ms.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/6.jpg" alt="lighting sphere vertical lighting effect"></p>
+<p>If all 54 light units are turned on, a circular light area will be formed, with the brightness set to 3 and the camera sensitivity set to 3200. The light source from all directions is perpendicular to the subject’s face, and the distribution of shadows and highlights is even, making the appearance of the portrait look more uniform, and there is almost no light source biased to one side, only the lower part due to the absence of light units, making the facial features on this side more prominent, but making the portrait more three-dimensional.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/7.jpg" alt="lighting sphere portrait lighting effect ertical lighting effect"></p>
+<p>If the 54-bit light unit open vertical column single side, will form a single side of the angle light source, its brightness is set to 10, other light units open brightness of 3 to fill the light, the camera sensitivity is set to 1600, the light source from the direction perpendicular to the subject’s face, shadows and highlights in the side more prominent, making the appearance of the portrait looks more three-dimensional prominent, other direction light source to ensure the overall brightness, can successfully achieve angle light lighting.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/8.jpg" alt="lighting sphere single-sided portrait lighting effect"></p>
+<p>After three-dimensional reconstruction through metashape, you can achieve a good single-side light lighting effect, if the original image will be directly reconstructed, the effect will be very poor, basically can not see the human form, when the use of MODNet keyed portrait, the effect becomes better as shown below, the direction of the light source and the subject’s face perpendicular, shadows and highlights on the side more prominent, making the appearance of the portrait looks more three-dimensional prominent, other directional light source to ensure the overall brightness, can successfully achieve angle light lighting.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/9.jpg" alt="metashape 3D portrait effect"></p>
+<p>For the front of the portrait of a single side light lighting effect, the direction of the light source is perpendicular to the subject’s face, open the front of the subject’s light unit and set the brightness to 8, the other light unit brightness is set to 3 for fill light, the camera sensitivity is set to 1600, shadows and highlights in the front more prominent, but the two sides of the unlit part of the three-dimensional shadow, making the appearance of the portrait looks more three-dimensional prominent, other directional light source to ensure the overall brightness, can successfully achieve angle light lighting.</p>
+<p><img src="/2023/07/01/Lighting-Sphere/10.jpg" alt="metashape 3D portrait effect"></p>
+<h3 id="4-Conclusion"><a href="#4-Conclusion" class="headerlink" title="4. Conclusion"></a>4. Conclusion</h3><p>The lighting sphere is a multi-view controllable lighting system control board with an array of 12 MCUs, which can be enhanced with PWM signals and output through a network port to control up to 60 lighting units. The lighting sphere control board can be controlled in real time by the PC-based visualization software, and set specific operation modes for automatic control. The lighting sphere can achieve multi-angle, multi-viewpoint and high-speed lighting control issues, so that the required lighting objects to provide various angles of light conditions to meet the shooting conditions and lighting tasks.</p>
+<p>Lighting sphere through the real-time control of 54 lighting units to achieve a multi-angle controlled light effect, the different light angle and the number of light units equivalent to 54. Each lighting unit can provide up to 2000hz PWM dimming frequency, achieving up to 100 levels of multi-level adjustment effect.</p>
+<h2 id="Video"><a href="#Video" class="headerlink" title="Video"></a>Video</h2><p>This video is an actual demonstration of the Handling robot</p>
+<div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe 
+src="https://www.bilibili.com/video/BV1Ds4y1F7Hz?t=1.0" scrolling="no" border="0" 
+frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; 
+height: 100%; left: 0; top: 0;"> </iframe></div>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a target="_blank" rel="noopener" href="https://KernZHANGYUE.github.io">Yue Zhang 张跃</a></p><p> <span>Link:  </span><a href="https://kernzhangyue.github.io/2023/07/01/Lighting-Sphere/">https://kernzhangyue.github.io/2023/07/01/Lighting-Sphere/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="nextSlogan" href="/2023/06/24/Basketball-Robot/" title="Basketball Robot"><span>NextPost ></span><br><span class="nextTitle">Basketball Robot</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lighting-Sphere-A-New-Controllable-Lighting-System-for-Multi-view-Lighting"><span class="toc-number">1.</span> <span class="toc-text">Lighting Sphere: A New Controllable Lighting System for Multi-view Lighting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Introduction"><span class="toc-number">1.1.</span> <span class="toc-text">1. Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Method"><span class="toc-number">1.2.</span> <span class="toc-text">2. Method</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Hardware-lighting-sphere-lighting-unit"><span class="toc-number">1.2.1.</span> <span class="toc-text">Hardware lighting sphere lighting unit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hardware-lighting-sphere-control-board"><span class="toc-number">1.2.2.</span> <span class="toc-text">Hardware lighting sphere control board</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3D-portrait-rendering-method"><span class="toc-number">1.2.3.</span> <span class="toc-text">3D portrait rendering method</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Experiment"><span class="toc-number">1.3.</span> <span class="toc-text">3. Experiment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Conclusion"><span class="toc-number">1.4.</span> <span class="toc-text">4. Conclusion</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Video"><span class="toc-number">2.</span> <span class="toc-text">Video</span></a></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>

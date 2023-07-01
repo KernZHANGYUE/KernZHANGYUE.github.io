@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Yue Zhang 张跃"><meta name="renderer" content="webkit"><meta name="copyright" content="Yue Zhang 张跃"><meta name="keywords" content="Yue Zhang 张跃"><meta name="description" content=""><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Multi-robot formation · Yue Zhang</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/z.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.3.0"></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/ZHANGYUE.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Yue Zhang 张跃</div><div class="profile-signature">Know your fate without fear, renew yourself every day</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.png);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Yue Zhang 张跃</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Multi-robot formation</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2023-06-24</span></span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h2 id="Multi-robot-formation"><a href="#Multi-robot-formation" class="headerlink" title="Multi-robot formation"></a>Multi-robot formation</h2><p>Laboratory of Multi-robot System Control, School of Automation, Southeast University<br>Multi-mobile Robot Formation Control based on Leader-follower Model.</p>
+<p>This project lasted for half year, and the entire code was built from scratch include ROS system and lower computer STM32, of which 90% was my contribution!</p>
+<h3 id="Work"><a href="#Work" class="headerlink" title="Work"></a>Work</h3><p><img src="/2023/06/24/formation-control/1.png" alt="Multi-robot formation"><br>This project focuses on the formation problem of wheeled mobile robots (WMRs), and implements an embedded control based formation method.</p>
+<p>Under the direct influence of formation tracking error, a new strategy is proposed, which decomposes the formation control task into two subtasks, different from the traditional formation controller design concept.</p>
+<p>One is the design of a virtual signal generator (i.e. virtual follower), and the other is the design of a trajectory tracking controller.</p>
+<p>The purpose of a virtual signal generator is to generate virtual coordinates as a reference trajectory for the follower.</p>
+<p>In order to solve the subtask of trajectory tracking controller design, this paper selects an unconstrained controller to ensure that it can stably follow the leader.</p>
+<p>In order to ensure real-time control, this article selects the high-performance processor Jetson Xavier Nx as the virtual coordinate calculation and implementation controller for the robot’s upper computer, STM32f103 as the system’s lower computer to collect robot information, and the McNumb wheel car as the chassis architecture of the wheeled robot to ensure stable algorithm performance.</p>
+<p>This article innovatively utilizes a ROS based system development strategy to implement a leader and follower wheeled robot formation, and obtains experimental and simulation data for analysis.</p>
+<p>For ROS, it is necessary to write a program for serial communication between the upper computer and the lower computer, and set up a multi machine network communication between the main and auxiliary machines to complete the construction of the robot communication network. The robot coordinate system and the coordinate system of the virtual signal generator should be determined to ensure the correctness of its establishment and the effectiveness of the algorithm.</p>
+<p>The PID program is written for the lower computer to control the wheel speed to reach the specified speed, and the closed-loop control is formed through the photoelectric encoder. Because the robot chassis uses the McNamm wheel structure, it needs to use the inverse Kinematics solution to solve the actual wheel speed according to the X, Y, Z three axis speed output by the upper computer, and feedback the actual speed of the robot to the upper computer through the forward Kinematics solution to form a complete closed-loop control.</p>
+<p>1.Designed and implemented a formation method based on the embedded control for the formation<br>problem of the WMRs(Wheel Mobile Robort) by designing the virtual signal generator and the track<br>tracking controller.<br>2.Investigated the McNamee chassis control based on kinematic positive solution and kinematic inverse solution.<br>3.Researched on a global localization algorithm based on time-based iteration and velocity awareness<br>4.Studied the embedded control algorithm based on virtual signal generator and trajectory tracker.<br>5.Implemented the engineering implementation and practical data support for wheeled mobile robot<br>formation control algorithms.</p>
+<p><img src="/2023/06/24/formation-control/2.png" alt="Multi-robot formation"></p>
+<h3 id="Video"><a href="#Video" class="headerlink" title="Video"></a>Video</h3><p>This video is an actual demonstration of the Multi-robot formation</p>
+<div style="position: relative; width: 100%; height: 0; padding-bottom: 75%;"><iframe 
+src="https://www.bilibili.com/video/BV1Jm4y1Y7T5?t=4.0" scrolling="no" border="0" 
+frameborder="no" framespacing="0" allowfullscreen="true" style="position: absolute; width: 100%; 
+height: 100%; left: 0; top: 0;"> </iframe></div>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a target="_blank" rel="noopener" href="https://KernZHANGYUE.github.io">Yue Zhang 张跃</a></p><p> <span>Link:  </span><a href="https://kernzhangyue.github.io/2023/06/24/formation-control/">https://kernzhangyue.github.io/2023/06/24/formation-control/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license noopener" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2023/06/24/Basketball-Robot/" title="Basketball Robot"><span>< PreviousPost</span><br><span class="prevTitle">Basketball Robot</span></a><a class="nextSlogan" href="/2023/06/24/Handling-Robot/" title="Handling Robot"><span>NextPost ></span><br><span class="nextTitle">Handling Robot</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Multi-robot-formation"><span class="toc-number">1.</span> <span class="toc-text">Multi-robot formation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Work"><span class="toc-number">1.1.</span> <span class="toc-text">Work</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Video"><span class="toc-number">1.2.</span> <span class="toc-text">Video</span></a></li></ol></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i></body></html>
